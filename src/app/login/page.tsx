@@ -11,6 +11,20 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  const loginWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: 'http://localhost:3002/chat', // remplace en prod
+    },
+  })
+
+  if (error) {
+    setError(error.message)
+  }
+}
+
+
   const handleLogin = async () => {
     setError(null)
     setLoading(true)
@@ -54,7 +68,12 @@ export default function LoginPage() {
       >
         {loading ? 'Connexion...' : 'Se connecter'}
       </button>
-
+    <button
+  onClick={loginWithGoogle}
+  className="w-full mt-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+>
+  Se connecter avec Google
+</button>
       {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
     </div>
   )
