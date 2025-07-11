@@ -35,7 +35,7 @@ export default function ChatPage() {
     }
 
     fetchUsers()
-  }, [])
+  }, [router])
 
   // 3. Charger les messages entre user et receiver
   useEffect(() => {
@@ -81,11 +81,21 @@ export default function ChatPage() {
 
     setMessages(data as Message[])
   }
-
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/login') // Redirection après déconnexion
+  }
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4 text-center">Discussion entre vous deux</h1>
-
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Discussion entre vous deux</h1>
+        <button
+          onClick={handleSignOut}
+          className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+        >
+          Se déconnecter
+        </button>
+      </div>
       <div className="h-80 overflow-y-auto mb-4 border p-4 rounded bg-gray-100">
         {messages.map((msg) => (
           <p
