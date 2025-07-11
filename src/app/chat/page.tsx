@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-
+import { useRouter } from 'next/navigation' 
 interface Message {
   id: string
   sender_id: string
@@ -16,7 +16,7 @@ export default function ChatPage() {
   const [receiverId, setReceiverId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
-
+  const router = useRouter()
   // 1. Obtenir l’utilisateur courant et identifier l’autre
   useEffect(() => {
     async function fetchUsers() {
@@ -24,8 +24,10 @@ export default function ChatPage() {
       const currentUserId = sessionData.user?.id
       setUserId(currentUserId ?? null)
 
-      if (!currentUserId) return
-
+      if (!currentUserId) {
+        router.push('/login')
+        return
+      }
       // 2. Trouver l’autre utilisateur dans la table 'users'
       const { data: allUsers } = await supabase.from('users').select('*')
       const other = allUsers?.find((u) => u.id !== currentUserId)
