@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server'  // si ta fonction s’appelle createClient
+import { createClient } from '@/utils/supabase/server'  
 
 interface Message {
   id: string
@@ -10,24 +10,27 @@ interface Message {
 
 import ChatClient from '@/components/ChatClient'
 
-export default async function ChatPage() {
+export default async function ChatPage({
+  searchParams,
+}: {
+  searchParams: { receiver?: string }
+}) {
   const supabase = await createClient()
 
   // 1. Récupérer la session utilisateur côté serveur
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  console.log("getuqser",user)
+  // console.log("getuqser",user)
   if (!user) {
     return <>Tannena</>
   }
 
   const userId = user.id
+   const  receiverId = searchParams.receiver ?? null
 
   // 2. Récupérer un autre utilisateur pour discuter
-  const { data: users } = await supabase.from('users').select('id')
-  const otherUser = users?.find((u: { id: unknown }) => u.id !== userId)
-  const receiverId = otherUser?.id ?? null
+
 
   // 3. Récupérer messages entre user et receiver
   let messages: Message[] = []

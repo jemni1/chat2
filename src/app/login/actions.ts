@@ -22,7 +22,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/chat')
+  redirect('/listofusers')
 }
 
 export async function signup(formData: FormData) {
@@ -46,10 +46,24 @@ const email=dt.email
   revalidatePath('/', 'layout')
   redirect('/login')
 }
+
 export async function signOut() {
     const supabase = await createClient();
     await supabase.auth.signOut();
     redirect('/login')
 
 
+}
+
+
+
+export async function chater(formData: FormData) {
+  const receiverId = formData.get('receiver_id') as string
+console.log(receiverId, "idreeeee");
+
+  if (!receiverId) {
+    throw new Error('Receiver ID is required')
+  }
+
+  redirect(`/chat?receiver=${receiverId}`)
 }
