@@ -1,8 +1,5 @@
-'use client'
+import { createClient } from '@/utils/supabase/server'  // si ta fonction s’appelle createClient
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation' 
 interface Message {
   id: string
   sender_id: string
@@ -11,66 +8,30 @@ interface Message {
   created_at: string
 }
 
-export default function ChatPage() {
-  const [userId, setUserId] = useState<string | null>(null)
-  const [receiverId, setReceiverId] = useState<string | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState('')
-  const router = useRouter()
-  // 1. Obtenir l’utilisateur courant et identifier l’autre
-  useEffect(() => {
-    async function fetchUsers() {
-      const { data: sessionData } = await supabase.auth.getUser()
-      const currentUserId = sessionData.user?.id
-      setUserId(currentUserId ?? null)
+import ChatClient from '@/components/ChatClient'
 
-      if (!currentUserId) {
-        router.push('/login')
-        return
-      }
-      // 2. Trouver l’autre utilisateur dans la table 'users'
-      const { data: allUsers } = await supabase.from('users').select('*')
-      const other = allUsers?.find((u) => u.id !== currentUserId)
-      setReceiverId(other?.id ?? null)
-    }
+export default async function ChatPage() {
+  const supabase = await createClient()
 
-    fetchUsers()
-  }, [router])
+  // 1. Récupérer la session utilisateur côté serveur
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  console.log("getuqser",user)
+  if (!user) {
+    return <>Tannena</>
+  }
 
-  // 3. Charger les messages entre user et receiver
-  useEffect(() => {
-    if (!userId || !receiverId) return
+  const userId = user.id
 
-    async function fetchMessages() {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .or(
-          `and(sender_id.eq.${userId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${userId})`
-        )
-        .order('created_at', { ascending: true })
+  // 2. Récupérer un autre utilisateur pour discuter
+  const { data: users } = await supabase.from('users').select('id')
+  const otherUser = users?.find((u: { id: unknown }) => u.id !== userId)
+  const receiverId = otherUser?.id ?? null
 
-      if (!error && data) setMessages(data as Message[])
-    }
-
-    fetchMessages()
-  }, [userId, receiverId])
-
-  // 4. Envoyer message
-  const sendMessage = async () => {
-    if (!newMessage || !userId || !receiverId) return
-
-    await supabase.from('messages').insert([
-      {
-        sender_id: userId,
-        receiver_id: receiverId,
-        content: newMessage,
-      },
-    ])
-
-    setNewMessage('')
-
-    // recharger manuellement (ou tu peux faire real-time après)
+  // 3. Récupérer messages entre user et receiver
+  let messages: Message[] = []
+  if (receiverId) {
     const { data } = await supabase
       .from('messages')
       .select('*')
@@ -79,56 +40,14 @@ export default function ChatPage() {
       )
       .order('created_at', { ascending: true })
 
-    setMessages(data as Message[])
+    messages = data ?? []
   }
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/login') // Redirection après déconnexion
-  }
-  return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Discussion entre vous deux</h1>
-        <button
-          onClick={handleSignOut}
-          className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-        >
-          Se déconnecter
-        </button>
-      </div>
-      <div className="h-80 overflow-y-auto mb-4 border p-4 rounded bg-gray-100">
-        {messages.map((msg) => (
-          <p
-            key={msg.id}
-            className={`mb-2 ${
-              msg.sender_id === userId ? 'text-right text-blue-700' : 'text-left text-gray-800'
-            }`}
-          >
-            <span className="block bg-white px-4 py-2 rounded shadow inline-block">
-              {msg.content}
-            </span>
-          </p>
-        ))}
-      </div>
 
-      <div className="flex gap-2">
-        <input
-          className="flex-grow px-4 py-2 border rounded"
-          type="text"
-          placeholder="Votre message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') sendMessage()
-          }}
-        />
-        <button
-          onClick={sendMessage}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Envoyer
-        </button>
-      </div>
-    </div>
+  // 4. Renvoyer le composant client avec les props
+  return (
+    <main className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
+      <h1 className="text-2xl font-bold mb-4">Discussion entre vous deux</h1>
+      <ChatClient userId={userId} receiverId={receiverId} initialMessages={messages} />
+    </main>
   )
 }
