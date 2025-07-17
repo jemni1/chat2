@@ -20,7 +20,16 @@ export async function login(formData: FormData) {
   if (error) {
     redirect('/login')
   }
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single()
+      if (profile?.role == 'admin') {
+            redirect('/admin/messages')
 
+      }
   revalidatePath('/', 'layout')
   redirect('/listofusers')
 }
@@ -54,6 +63,7 @@ export async function signOut() {
 
 
 }
+
 export async function returnToList() {
     
     redirect('/listofusers')
@@ -72,3 +82,4 @@ console.log(receiverId, "idreeeee");
 
   redirect(`/chat?receiver=${receiverId}`)
 }
+

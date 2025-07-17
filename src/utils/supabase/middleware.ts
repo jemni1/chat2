@@ -1,4 +1,3 @@
-import { middleware } from '@/middleware'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -54,7 +53,19 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
+if (request.nextUrl.pathname.startsWith('/admin')) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user?.id)
+    .single()
 
+  if (profile?.role !== 'admin') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/listofusers' // ou une autre page
+    return NextResponse.redirect(url)
+  }
+}
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
