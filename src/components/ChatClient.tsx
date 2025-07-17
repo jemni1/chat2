@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { signOut } from '@/app/login/actions'
+import { signOut,returnToList } from '@/app/login/actions'
 
 interface Message {
   id: string
@@ -76,6 +76,14 @@ useEffect(() => {
 
   return (
     <>
+    <form action={returnToList}  className="mb-4">
+  <button
+    type="submit"
+    className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+  >
+    ← Retour à la liste
+  </button>
+</form>
     <form action={signOut} className="flex justify-end mb-4">
         <button
           className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"

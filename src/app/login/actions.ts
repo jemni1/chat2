@@ -54,7 +54,12 @@ export async function signOut() {
 
 
 }
+export async function returnToList() {
+    
+    redirect('/listofusers')
 
+
+}
 
 
 export async function chater(formData: FormData) {

@@ -1,4 +1,6 @@
+export const dynamic = 'force-dynamic'
 import { createClient } from '@/utils/supabase/server'  
+import ChatClient from '@/components/ChatClient'
 
 interface Message {
   id: string
@@ -8,12 +10,11 @@ interface Message {
   created_at: string
 }
 
-import ChatClient from '@/components/ChatClient'
 
 export default async function ChatPage({
   searchParams,
 }: {
-  searchParams: { receiver?: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }) {
   const supabase = await createClient()
 
@@ -27,7 +28,7 @@ export default async function ChatPage({
   }
 
   const userId = user.id
-   const  receiverId = searchParams.receiver ?? null
+   const  receiverId = (await searchParams).receiver ?? null
 
   // 2. Récupérer un autre utilisateur pour discuter
 
