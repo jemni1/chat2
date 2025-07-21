@@ -55,7 +55,8 @@ useEffect(() => {
 }, [userId, receiverId])
   const sendMessage = async () => {
     if (!newMessage.trim() || !userId || !receiverId) return
-
+const session = await supabase.auth.getSession();
+console.log('Token JWT:', session?.data.session?.access_token);
     const { data, error } = await supabase
       .from('messages')
       .insert([{ sender_id: userId, receiver_id: receiverId, content: newMessage }])

@@ -3,7 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/app/login/actions'
-
+import FilteredMessages from '@/components/FiltredMessages'
 interface Message {
   id: string
   sender_id: string
@@ -31,8 +31,9 @@ export default async function AdminMessagesPage() {
 
       const supabase = await createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      console.log(user,"user");
-      
+      const { data: allUsers } = await supabase.from('users').select('id, email')
+      const otherUsers = allUsers?.filter((u) => u.id !== user?.id) ?? []
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -61,34 +62,13 @@ export default async function AdminMessagesPage() {
     <div>
         <form action={signOut} className="flex justify-end mb-4">
         <button
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
+          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-400 text-sm"
         >
           Se déconnecter
         </button>
       </form>
       <h1>Interface admin : messages</h1>
-      <ul>
-        {(messages ?? []).map((msg) => (
-          <li key={msg.id} className="my-4">
-            <p><strong>{msg.content}</strong></p>
-
-            <form action={deleteMessage}>
-              <input type="hidden" name="id" value={msg.id} />
-              <button type="submit" className="text-red-500">Supprimer</button>
-            </form>
-                <form action={updateMessage}>
-              <input type="hidden" name="id" value={msg.id} />
-              <input
-                name="content"
-                defaultValue={msg.content}
-                className="border px-2 py-1"
-              />
-              <button type="submit" className="text-blue-500">Modifier</button>
-            </form>
-            
-          </li>
-        ))}
-      </ul>
+      <FilteredMessages messages={messages} users={otherUsers}></FilteredMessages>
     </div>
   )
 }

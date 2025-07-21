@@ -1,3 +1,4 @@
+
 export const dynamic = 'force-dynamic'
 import { createClient } from '@/utils/supabase/server'  
 import ChatClient from '@/components/ChatClient'
@@ -14,7 +15,7 @@ interface Message {
 export default async function ChatPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: { [key: string]: string | undefined }
 }) {
   const supabase = await createClient()
 
