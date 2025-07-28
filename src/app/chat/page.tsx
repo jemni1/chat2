@@ -19,7 +19,6 @@ export default async function ChatPage({
 }) {
   const supabase = await createClient()
 
-  // 1. Récupérer la session utilisateur côté serveur
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -31,10 +30,8 @@ export default async function ChatPage({
   const userId = user.id
    const  receiverId = (await searchParams).receiver ?? null
 
-  // 2. Récupérer un autre utilisateur pour discuter
 
 
-  // 3. Récupérer messages entre user et receiver
   let messages: Message[] = []
   if (receiverId) {
     const { data } = await supabase
@@ -48,10 +45,9 @@ export default async function ChatPage({
     messages = data ?? []
   }
 
-  // 4. Renvoyer le composant client avec les props
   return (
     <main className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Discussion entre vous deux</h1>
+      <h1 className="text-2xl font-bold mb-4">Discussion </h1>
       <ChatClient userId={userId} receiverId={receiverId} initialMessages={messages} />
     </main>
   )

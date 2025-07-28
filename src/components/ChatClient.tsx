@@ -20,10 +20,27 @@ interface Props {
 export default function ChatClient({ userId, receiverId, initialMessages }: Props) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [newMessage, setNewMessage] = useState('')
+  const [receiverEmail, setReceiverEmail] = useState<string | null>(null)
 
      
 useEffect(() => {
   if (!userId || !receiverId) return
+
+  const fetchReceiverEmail = async () => {
+      const { data, error } = await supabase
+        .from('users') // Remplace 'users' par le nom exact de ta table utilisateurs
+        .select('email')
+        .eq('id', receiverId)
+        .single()
+
+      if (error) {
+        console.error('Erreur lors de la récupération de l’email', error)
+      } else {
+        setReceiverEmail(data.email)
+      }
+    }
+
+    fetchReceiverEmail()
 
   const channel = supabase
     .channel('messages-realtime')
@@ -77,6 +94,105 @@ console.log('Token JWT:', session?.data.session?.access_token);
 
   return (
     <>
+    <div className="flex justify-between px-4 py-3 gap-3">
+  <form action={returnToList}>
+    <button
+      type="submit"
+      className="h-10 px-4 rounded-full bg-[#eaedf1] text-[#101518] text-sm font-bold"
+    >
+      Back to User List
+    </button>
+  </form>
+
+  <form action={signOut}>
+    <button
+      type="submit"
+      className="h-10 px-4 rounded-full bg-[#dce8f3] text-[#101518] text-sm font-bold"
+    >
+      Sign Out
+    </button>
+  </form>
+</div>
+
+<div className="flex justify-center px-6 py-5">
+  <div className="flex flex-col w-full max-w-[960px]">
+    {/* Breadcrumb */}
+    <div className="flex items-center gap-2 px-4 pb-2">
+      <a className="text-[#5c748a] text-base font-medium" href="#">Messages</a>
+      <span className="text-[#5c748a]">/</span>
+      <span className="text-[#101518] text-base font-medium">{receiverEmail}</span>
+    </div>
+
+    {/* Messages List */}
+    <div className="flex flex-col gap-2 px-2 py-4">
+      {messages.map((msg) => (
+        <div
+          key={msg.id}
+          className={`flex gap-3 px-2 ${
+            msg.sender_id === userId ? 'justify-end' : 'justify-start'
+          }`}
+        >
+          {/* Avatar on left if receiver */}
+          {msg.sender_id !== userId && (
+            <div
+              className="w-10 h-10 rounded-full bg-cover bg-center"
+              style={{
+                backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuDpONtx9PEmGm4vK7UJBQz4PKSn9q60SaSBWVlsfOPJsHRZWuMbUgKVMdnnXMlhXJEN8ztHTnbHHNVkbb-H6d4oiuNxNbwNCVezvBszKoKBy7pg4YEZ9wGiV_3tVn2pqJamxYGoYmPIbyYvs-7SIoQszJB1uBlYuTqNbCDy6b4jrJMY77w3s1nNC-x-W7D2sLp4-OKAIvExv62tJOtt0_hYvPIjh4jrMc2xhEhfyLYiTpnHzUO0cCbhT13r_LCezQp8D77NhQQobRU")`,
+              }}
+            />
+          )}
+
+          {/* Message Bubble */}
+          <div className="max-w-[70%] flex flex-col">
+            <p
+              className={`px-4 py-3 rounded-xl text-base font-normal ${
+                msg.sender_id === userId
+                  ? 'bg-blue-100 text-blue-800 self-end'
+                  : 'bg-[#eaedf1] text-[#101518] self-start'
+              }`}
+            >
+              {msg.content}
+            </p>
+          </div>
+
+          {/* Avatar on right if sender */}
+          {msg.sender_id === userId && (
+            <div
+              className="w-10 h-10 rounded-full bg-cover bg-center"
+              style={{
+                backgroundImage: `url("https://example.com/your-user-avatar.png")`,
+              }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+
+    {/* Message Input */}
+    <div className="flex items-center px-4 py-3 gap-3">
+      <label className="flex flex-1">
+        <div className="flex w-full rounded-xl overflow-hidden bg-[#eaedf1]">
+          <input
+            type="text"
+            placeholder="Write a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            className="flex-1 h-12 px-4 text-base bg-transparent border-none placeholder:text-[#5c748a] text-[#101518] focus:outline-none"
+          />
+          <button
+            onClick={sendMessage}
+            className="h-12 px-4 bg-[#dce8f3] text-sm text-[#101518] font-medium rounded-l-none"
+          >
+            Send
+          </button>
+        </div>
+      </label>
+    </div>
+  </div>
+</div>
+
+{/* 
     <form action={returnToList}  className="mb-4">
   <button
     type="submit"
@@ -122,7 +238,7 @@ console.log('Token JWT:', session?.data.session?.access_token);
         >
           Envoyer
         </button>
-      </div>
+      </div> */}
     </>
   )
 }

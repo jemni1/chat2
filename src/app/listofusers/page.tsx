@@ -29,7 +29,7 @@ export default async function ListOfClient() {
                   
               style={{
               backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuDpONtx9PEmGm4vK7UJBQz4PKSn9q60SaSBWVlsfOPJsHRZWuMbUgKVMdnnXMlhXJEN8ztHTnbHHNVkbb-H6d4oiuNxNbwNCVezvBszKoKBy7pg4YEZ9wGiV_3tVn2pqJamxYGoYmPIbyYvs-7SIoQszJB1uBlYuTqNbCDy6b4jrJMY77w3s1nNC-x-W7D2sLp4-OKAIvExv62tJOtt0_hYvPIjh4jrMc2xhEhfyLYiTpnHzUO0cCbhT13r_LCezQp8D77NhQQobRU")`,
-            }}                ></div>
+            }}></div>
                 <div className="flex flex-col justify-center">
                   <p className="text-[#5c748a] text-sm font-normal leading-normal line-clamp-2">{user.email}</p>
                 </div>
@@ -37,6 +37,8 @@ export default async function ListOfClient() {
               <div className="shrink-0">
                 <form action={chater}>
                 <input type="hidden" name="receiver_id" value={user.id} />
+                <input type="hidden" name="email" value={user.email} />
+
                 <button
                   type="submit"
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#eaedf1] text-[#101518] text-sm font-medium leading-normal w-fit"
@@ -53,9 +55,4 @@ export default async function ListOfClient() {
   
 </>
 )
-
-
-
-
-
 }
