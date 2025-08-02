@@ -116,14 +116,12 @@ console.log('Token JWT:', session?.data.session?.access_token);
 
 <div className="flex justify-center px-6 py-5">
   <div className="flex flex-col w-full max-w-[960px]">
-    {/* Breadcrumb */}
     <div className="flex items-center gap-2 px-4 pb-2">
       <a className="text-[#5c748a] text-base font-medium" href="#">Messages</a>
       <span className="text-[#5c748a]">/</span>
       <span className="text-[#101518] text-base font-medium">{receiverEmail}</span>
     </div>
 
-    {/* Messages List */}
     <div className="flex flex-col gap-2 px-2 py-4">
       {messages.map((msg) => (
         <div
@@ -132,7 +130,6 @@ console.log('Token JWT:', session?.data.session?.access_token);
             msg.sender_id === userId ? 'justify-end' : 'justify-start'
           }`}
         >
-          {/* Avatar on left if receiver */}
           {msg.sender_id !== userId && (
             <div
               className="w-10 h-10 rounded-full bg-cover bg-center"
@@ -142,7 +139,6 @@ console.log('Token JWT:', session?.data.session?.access_token);
             />
           )}
 
-          {/* Message Bubble */}
           <div className="max-w-[70%] flex flex-col">
             <p
               className={`px-4 py-3 rounded-xl text-base font-normal ${

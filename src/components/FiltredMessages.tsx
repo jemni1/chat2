@@ -112,7 +112,7 @@ if (loading) {
                 <table className="flex-1">
                   <thead>
                     <tr className="bg-gray-50">
-                      <th className="table-67aa989e-dcd7-4076-8e5f-60f8b93ca4ef-column-120 px-4 py-3 text-left text-[#101518] w-[400px] text-sm font-medium leading-normal">Content</th>
+                      <th className="table-67aa989e-dcd7-4076-8e5f-60f8b93ca4ef-column-120 px-4 py-3 text-left text-[#101518] w-[500px] text-sm font-medium leading-normal">Content</th>
                       <th className="table-67aa989e-dcd7-4076-8e5f-60f8b93ca4ef-column-240 px-4 py-3 text-left text-[#101518] w-[400px] text-sm font-medium leading-normal">Sender</th>
                       <th className="table-67aa989e-dcd7-4076-8e5f-60f8b93ca4ef-column-360 px-4 py-3 text-left text-[#101518] w-[400px] text-sm font-medium leading-normal">
                         Receiver
@@ -127,7 +127,7 @@ if (loading) {
                          {allmessages.map((msg) => (
 
                     <tr key={msg.id} className="border-t border-[#d4dce2]">
-        <td className="px-4 py-2 text-[#5c748a] text-sm">
+        <td className="w-[84px] px-4 py-2 text-[#5c748a] text-sm">
           <form action={updateMessage} className="flex items-center gap-2">
             <input type="hidden" name="id" value={msg.id} />
             <input

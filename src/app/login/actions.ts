@@ -84,4 +84,26 @@ console.log(receiverId, "idreeeee");
 }
 
 
+export async function resetPassword(formData: FormData) {
+  const supabase = await createClient()
+
+  const email = formData.get('email') as string
+
+  if (!email) {
+    throw new Error('Email is required')
+  }
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_URL}/reset-password`,  
+  })
+
+  if (error) {
+    throw new Error('Failed to send password reset email: ' + error.message)
+  }
+
+
+  redirect('/password-reset-confirmation')  
+}
+
+
 

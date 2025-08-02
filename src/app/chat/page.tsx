@@ -46,7 +46,7 @@ export default async function ChatPage({
   }
 
   return (
-    <main className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
+    <main className="w-[999px] mx-auto mt-10 p-6 bg-white rounded shadow">
       <h1 className="text-2xl font-bold mb-4">Discussion </h1>
       <ChatClient userId={userId} receiverId={receiverId} initialMessages={messages} />
     </main>

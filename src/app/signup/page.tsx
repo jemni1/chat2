@@ -1,66 +1,75 @@
-'use client'
-
-import { useState } from 'react'
-import { supabase } from '@supabase/ssr'
-import { useRouter } from 'next/navigation'
-
-export default function SignupPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
-
-  const handleSignup = async () => {
-    setError(null)
-    setLoading(true)
-
-    const { data, error } = await supabase.auth.signUp({ email, password })
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
-    }
-
-    // Optionnel: insérer l’utilisateur dans ta table 'users'
-    if (data.user?.id) {
-      await supabase.from('users').insert([{ id: data.user.id, email }])
-    }
-
-    setLoading(false)
-    router.push('/login')
-  }
-
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
+import { signup } from "../login/actions"
+import { cn } from "@/lib/utils"
+export default function CardDemo() {
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-6 text-center">Créer un compte</h1>
-
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full mb-4 px-4 py-2 border rounded"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-
-      <input
-        type="password"
-        placeholder="Mot de passe"
-        className="w-full mb-4 px-4 py-2 border rounded"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-
-      <button
-        onClick={handleSignup}
-        disabled={loading}
-        className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? 'Création...' : 'S’inscrire'}
-      </button>
-
-      {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
+    <>
+    <div className="px-10 h-11 bg-[#E5E8EB] flex flex-row justify-between items-center">
+    <h1 className="px-2 text-[28px]">doghriyoun</h1>
+    <div className="flex flex-row space-x-6">
+      <p>home</p>
+      <p>contact</p>
+      <p>about</p>
     </div>
+    </div>
+    <div className="flex justify-center items-center">
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-[28px] text-center">Create your account</CardTitle>
+        <CardDescription>
+          Enter your email below to login to your account
+        </CardDescription>
+      </CardHeader>
+      <form>
+      <CardContent>
+        
+          <div className="flex flex-col gap-6">
+            <div>
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="bg-[#E8EDF2] text-[16px]  w-[480px] h-[56px] p-4"
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                
+              </div>
+              <Input name="password" id="password" className="bg-[#E8EDF2] text-[16px]  w-[480px] h-[56px] p-4" type="password" required />
+            </div>
+          </div>
+        
+      </CardContent>
+      <CardFooter className="flex flex-col p-5">
+        
+        <Button formAction={signup} type="submit" className={cn("bg-[#429CF0] w-[480px] h-[40px] mt-6")}>
+          
+          SignUp
+        </Button>
+        
+        <Link href="/login" className="text-center text-[#4D7399] mt-15">
+          Already have an Account? Login
+        </Link>
+      </CardFooter>
+      </form>
+    </Card>
+    </div>
+    </>
   )
 }

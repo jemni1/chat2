@@ -1,5 +1,7 @@
 import { createClient } from '@/utils/supabase/server'  
-import { chater } from '../login/actions'
+import { chater, signOut } from '../login/actions'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export default async function ListOfClient() {
     const supabase = await createClient()
@@ -18,7 +20,14 @@ export default async function ListOfClient() {
         <>
 <div className="px-40 flex flex-1 justify-center py-5">
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
-            <div className="flex flex-wrap justify-between gap-3 p-4"><p className="text-[#101518] tracking-light text-[32px] font-bold leading-tight min-w-72">Users</p></div>
+            <div className="flex flex-row justify-between items-center gap-3 p-4">
+              <p className="text-[#101518] tracking-light text-[32px] font-bold leading-tight min-w-72">
+                Users
+              </p>
+              <form>
+              <Button formAction={signOut} className={cn("bg-gray-400 w-[200px] h-[40px] mt-6")}>SignOut</Button>
+              </form>
+              </div>
             
             {otherUsers.map((user) => (
 
