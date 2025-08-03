@@ -1,4 +1,3 @@
-import { signOut } from "../login/actions"
 import { Button } from "@/components/ui/button"
 
 export default function CardDemo() {
