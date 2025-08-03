@@ -11,12 +11,10 @@ interface Message {
   created_at: string
 }
 
-
-export default async function ChatPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
+interface ChatPageProps {
+  searchParams?: { [key: string]: string | string[] | undefined }
+}
+export default async function ChatPage({ searchParams }: ChatPageProps) {
   const supabase = await createClient()
 
   const {
@@ -28,7 +26,7 @@ export default async function ChatPage({
   }
 
   const userId = user.id
-   const  receiverId = (await searchParams).receiver ?? null
+   const  receiverId = (await searchParams)?.receiver ?? null
 
 
 
