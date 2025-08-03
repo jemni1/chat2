@@ -2,7 +2,7 @@
 
 import { supabase } from '@/lib/supabaseClient'
 import { useEffect, useState } from 'react'
-import { updateMessage,deleteMessage } from '@/app/admin/messages/page'
+import { updateMessage,deleteMessage} from './../app/admin/messages/action'
 import Loading from '@/components/Loading'
 
 interface Message {

@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { signOut } from '@/app/login/actions'
 import FilteredMessages from '@/components/FiltredMessages'
+
 interface Message {
   id: string
   sender_id: string
@@ -11,22 +12,7 @@ interface Message {
   content: string
   created_at: string
 }
-export async function deleteMessage(formData: FormData) {
-  const messageId = formData.get('id') as string
 
-  const supabase = createClient()
-  await (await supabase).from('messages').delete().eq('id', messageId)
-
-  redirect('/admin/messages')
-}
-export async function updateMessage(formData: FormData) {
-  const messageId = formData.get('id') as string
-  const newContent = formData.get('content') as string
-  const supabase = createClient()
-  await (await supabase).from('messages').update({content:newContent}).eq('id', messageId)
-
-  redirect('/admin/messages')
-}
 export default async function AdminMessagesPage() {
 
       const supabase = await createClient()

@@ -22,7 +22,7 @@ useEffect(() => {
   }
 
   setLoading(false)
-}, [])
+}, [searchParams, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
