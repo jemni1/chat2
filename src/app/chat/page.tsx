@@ -15,7 +15,7 @@ interface Message {
 export default async function ChatPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined }
+  searchParams: { [key: string]: string | string[] | undefined }
 }) {
   const supabase = await createClient()
 
@@ -28,7 +28,7 @@ export default async function ChatPage({
   }
 
   const userId = user.id
-   const  receiverId = (await searchParams).receiver ?? null
+   const  receiverId =  searchParams.receiver ?? null
 
 
 
