@@ -13,7 +13,7 @@ interface Message {
 
 interface Props {
   userId: string
-  receiverId: string | string[] | null
+  receiverId: string |string[] | null
   initialMessages: Message[]
 }
 

@@ -28,7 +28,7 @@ export default async function ChatPage({
   }
 
   const userId = user.id
-   const  receiverId =  searchParams.receiver ?? null
+   const  receiverId = (await searchParams).receiver ?? null
 
 
 
