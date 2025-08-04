@@ -92,9 +92,9 @@ export default function LoginPage() {
         </Button>
         </div>
         </form>
-        <div className='m-5 w-[928px] h-[21px] pb-2'>
+        <div className='m-8 w-[480px] h-[40px] pb-2 flex justify-center'>
             <Dialog>
-              <DialogTrigger className='text-[#4A739C] text-base'>
+              <DialogTrigger className='text-[#4A739C] text-base '>
                 Forgot PAssword
               </DialogTrigger>
               <DialogContent>
@@ -109,8 +109,8 @@ export default function LoginPage() {
                 name="email"
                 placeholder="Enter your email"
                 className="w-full p-2 border border-gray-300 rounded mb-4"
-                      />                
-                      <Button formAction={resetPassword} className='bg-gray-400 ml-4'>Reset password</Button>
+                />
+                <Button formAction={resetPassword} className='bg-gray-400 ml-4'>Reset password</Button>
                 </form>
               </DialogContent>
 

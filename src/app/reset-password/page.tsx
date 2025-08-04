@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-
-export default function ResetPasswordPage() {
+ 
+function ResetPasswordPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [newPassword, setNewPassword] = useState('')
@@ -55,5 +55,13 @@ useEffect(() => {
         <Button type="submit" className="w-full">Update Password</Button>
       </form>
     </div>
+  )
+}
+export default function ResetPassword(){
+return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <ResetPasswordPage />
+    </Suspense>
   )
 }
