@@ -2,7 +2,6 @@
 
 import { supabase } from '@/lib/supabaseClient'
 import { useEffect, useState } from 'react'
-import { updateMessage,deleteMessage} from './../app/admin/messages/action'
 import Loading from '@/components/Loading'
 
 interface Message {
@@ -21,11 +20,36 @@ interface FilteredMessagesProps {
   messages: Message[]
   users: User[]
 }
-export default function FilteredMessages({ messages, users }: FilteredMessagesProps) {
-  const [allmessages, setallmessages] = useState<Message[]>(messages)
+export default function FilteredMessages({  users }: FilteredMessagesProps) {
+  const [allmessages, setallmessages] = useState<Message[]>([])
   const [senderId, setSenderId] = useState('')
   const [receiverId, setReceiverId] = useState('')
-  
+    const [content, setContent] = useState('')
+
+  useEffect(() => {
+    fetchMessages()
+  }, [])
+
+  async function fetchMessages() {
+    const { data} = await supabase.from('messages').select('*')
+    if (data) setallmessages(data)
+  }
+    async function handleDelete(id: string) {
+    await supabase.from('messages').delete().eq('id', id)
+    setallmessages(prev => prev.filter(msg => msg.id !== id))
+  }
+
+   async function handleUpdate(id: string, newContent:string) {
+    await supabase.from('messages').update({ content: newContent }).eq('id', id)
+setallmessages(prev =>
+  prev.map(msg =>
+    msg.id === id
+      ? { ...msg, content: newContent } // on remplace content ici
+      : msg
+  )
+) 
+}
+
 const [loading, setLoading] = useState(false)
 const getUserEmail = (id: string) => users.find((u) => u.id === id)?.email || 'Unknown'
 
@@ -128,18 +152,21 @@ if (loading) {
 
                     <tr key={msg.id} className="border-t border-[#d4dce2]">
         <td className="w-[84px] px-4 py-2 text-[#5c748a] text-sm">
-          <form action={updateMessage} className="flex items-center gap-2">
-            <input type="hidden" name="id" value={msg.id} />
+
             <input
               type="text"
               name="content"
               defaultValue={msg.content}
               className="w-full border rounded-md px-2 py-1"
+              onChange={(e) => setContent(e.target.value)}
             />
-            <button className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-md">
-              Modifier
-            </button>
-          </form>
+            
+            <button
+            onClick={() => handleUpdate(msg.id, content)}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-md"
+          >
+            update
+          </button>
         </td>
 
         <td className="px-4 py-2 text-[#5c748a] text-sm">
@@ -156,15 +183,16 @@ if (loading) {
 
         <td className="px-4 py-2 text-[#5c748a] text-sm flex gap-2">
           
-          <form action={deleteMessage}>
-            <input type="hidden" name="id" value={msg.id} />
-            <button className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md">
-              Supprimer
-            </button>
-          </form>
+            <button
+            onClick={() => handleDelete(msg.id)}
+            className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md"
+          >
+            
+            Supprimer
+          </button>
         </td>
       </tr>
-                            ))}
+    ))}
 
                     </tbody>
                 </table>

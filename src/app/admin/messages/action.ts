@@ -9,7 +9,6 @@ export async function deleteMessage(formData: FormData) {
   const supabase = createClient()
   await (await supabase).from('messages').delete().eq('id', messageId)
 
-  redirect('/admin/messages')
 }
 
 export async function updateMessage(formData: FormData) {
